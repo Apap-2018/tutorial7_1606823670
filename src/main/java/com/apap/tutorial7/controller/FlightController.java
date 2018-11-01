@@ -1,15 +1,25 @@
 package com.apap.tutorial7.controller;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.apap.tutorial7.rest.*;
 import com.apap.tutorial7.model.FlightModel;
 import com.apap.tutorial7.model.PilotModel;
 import com.apap.tutorial7.service.FlightService;
 import com.apap.tutorial7.service.PilotService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,13 +32,32 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * FlightController
  */
-@Controller
+@RestController
+@RequestMapping("/flight")
 public class FlightController {
     @Autowired
     private FlightService flightService;
     
     @Autowired
     private PilotService pilotService;
+    
+    @Bean
+    public RestTemplate rest() {
+    	return new RestTemplate();
+    }
+    
+    @GetMapping(value = "/view")
+    public FlightModel viewFlight(@RequestParam("flightNumber") String flightNumber) {
+    	FlightModel flight = flightService.getFlightDetailByFlightNumber(flightNumber).get();
+    	return flight;
+    }
+    
+    @DeleteMapping(value = "/delete")  
+    public String deleteFlight(@RequestParam("flightNumber") String flightNumber) {
+    	FlightModel flight = flightService.getFlightDetailByFlightNumber(flightNumber).get();
+    	flightService.deleteByFlightNumber(flightNumber);
+    	return "success";
+    }
 
     @RequestMapping(value = "/flight/add/{licenseNumber}", method = RequestMethod.GET)
     private String add(@PathVariable(value = "licenseNumber") String licenseNumber, Model model) {
@@ -70,21 +99,6 @@ public class FlightController {
             }
         }
         return "add";
-    }
-
-
-    @RequestMapping(value = "/flight/view", method = RequestMethod.GET)
-    private @ResponseBody FlightModel view(@RequestParam(value = "flightNumber") String flightNumber, Model model) {
-        FlightModel archive = flightService.getFlightDetailByFlightNumber(flightNumber).get();
-        return archive;
-    }
-
-    @RequestMapping(value = "/flight/delete", method = RequestMethod.POST)
-    private String delete(@ModelAttribute PilotModel pilot, Model model) {
-        for (FlightModel flight : pilot.getListFlight()) {
-            flightService.deleteByFlightNumber(flight.getFlightNumber());
-        }
-        return "delete";
     }
 
     @RequestMapping(value = "/flight/update", method = RequestMethod.GET)

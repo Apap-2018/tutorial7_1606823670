@@ -1,7 +1,5 @@
 package com.apap.tutorial7.controller;
 
-import java.util.Optional;
-
 import com.apap.tutorial7.model.PilotModel;
 import com.apap.tutorial7.rest.PilotDetail;
 import com.apap.tutorial7.rest.Setting;
@@ -17,13 +15,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * PilotController
